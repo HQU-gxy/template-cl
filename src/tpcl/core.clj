@@ -2,7 +2,8 @@
   (:require [cheshire.core :as json]
             [json-path :as jp]
             [tpcl.utils :as utils]
-            [tech.v3.dataset :as ds])
+            [tech.v3.dataset :as ds]
+            [taoensso.timbre :as log])
   (:import (java.time YearMonth)
            (java.time LocalDate)))
 

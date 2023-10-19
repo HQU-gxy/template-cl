@@ -1,8 +1,16 @@
 {
  :deps  {clojure.java-time/clojure.java-time {:mvn/version "1.1.0"}
          json-path/json-path                 {:mvn/version "2.2.0"}
-         org.clojure/data.json               {:mvn/version "2.4.0"}
          cheshire/cheshire                   {:mvn/version "5.12.0"}
          techascent/tech.ml.dataset          {:mvn/version "7.014"}
-         scicloj/tablecloth                  {:mvn/version "7.014"}}
- :paths ["src"]}
+         scicloj/tablecloth                  {:mvn/version "7.014"}
+         org.clojure/core.match              {:mvn/version "1.0.1"}
+         metosin/reitit                      {:mvn/version "0.7.0-alpha7"}
+         aleph/aleph                         {:mvn/version "0.7.0-alpha2"}
+         zerg000000/simple-cors              {:mvn/version "0.0.8"}
+         ring/ring                           {:mvn/version "1.11.0-beta2"}
+         ;; https://dominic.io/post/clojure-logging-prod/
+         ;; https://lambdaisland.com/blog/2020-06-12-logging-in-clojure-making-sense-of-the-mess
+         com.taoensso/timbre {:mvn/version "6.3.1"}
+         com.fzakaria/slf4j-timbre {:mvn/version "0.4.0"}}
+ :paths ["src" "resources"]}
