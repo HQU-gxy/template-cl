@@ -24,7 +24,4 @@
                                                       (fn [date]
                                                         (let [ym (YearMonth/parse date)]
                                                           (LocalDate/of (.getYear ym) (.getMonth ym) 1)))]}}))
-(print operation-data)
-
-
-
+(log/info operation-data)
