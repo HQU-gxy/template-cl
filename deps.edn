@@ -1,5 +1,4 @@
-{
- :deps  {clojure.java-time/clojure.java-time {:mvn/version "1.1.0"}
+{:deps  {clojure.java-time/clojure.java-time {:mvn/version "1.1.0"}
          json-path/json-path                 {:mvn/version "2.2.0"}
          cheshire/cheshire                   {:mvn/version "5.12.0"}
          techascent/tech.ml.dataset          {:mvn/version "7.014"}
