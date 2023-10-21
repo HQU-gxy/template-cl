@@ -1,5 +1,6 @@
 (ns tpcl.http
   (:require [aleph.http :as ah]
+            [babashka.fs :as fs]
             [reitit.ring :as ring]
             [simple-cors.aleph.middleware :as cors]
             [reitit.swagger :as swagger]
@@ -7,8 +8,11 @@
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.coercion.spec :as rcs]
             [reitit.ring.coercion :as rrc]
+            [cheshire.core :as json]
             [muuntaja.core :as m]
             [taoensso.timbre :as log]))
+
+(def template-path "templates")
 
 (def cors-config {:cors-config {:allowed-request-methods [:post :get :put :delete]
                                 :allowed-request-headers ["Authorization" "Content-Type"]
@@ -16,8 +20,8 @@
 
 ;; middles
 (def reitit-options
-  {:data {:muuntaja m/instance
-          :coercion rcs/coercion
+  {:data {:muuntaja   m/instance
+          :coercion   rcs/coercion
           :middleware [muuntaja/format-middleware
                        rrc/coerce-exceptions-middleware
                        rrc/coerce-request-middleware
@@ -33,6 +37,38 @@
                            (fn [_req] {:status  302
                                        :headers {"location" "/swagger/index.html"}})}}]
         ["/swagger/*" {:get (swagger-ui/create-swagger-ui-handler)}]]
+       ["/template/:name" {:get {:summary    "get template"
+                                 :parameters {:path {:name string?}}
+                                 :handler    (fn [req]
+                                               (let [{{{:keys [name]} :path} :parameters} req
+                                                     file-temp-path (fs/path template-path name)
+                                                     ext (fs/extension file-temp-path)
+                                                     file-path (if (empty? ext)
+                                                                 (let [parent (fs/parent file-temp-path)
+                                                                       filename (fs/file-name file-temp-path)]
+                                                                   (fs/path parent (str filename ".json")))
+                                                                 file-temp-path)
+                                                     ;; the extension (without dot), will be used for splitting
+                                                     file-content (if (= (fs/extension file-path) "json")
+                                                                    (if (fs/exists? file-path)
+                                                                      (try
+                                                                        {:code    200
+                                                                         :content (json/decode (slurp (str file-path)) true)}
+                                                                        (catch Exception e
+                                                                          {:code  500
+                                                                           :error (.getMessage e)}))
+                                                                      {:code  404
+                                                                       :error (str "template not found for file " file-path)})
+                                                                    {:code  400
+                                                                     :error "not a valid template extension"})
+                                                     code (:code file-content)
+                                                     content (:content file-content)
+                                                     error (:error file-content)]
+                                                 (if (nil? error)
+                                                   {:status code
+                                                    :body   content}
+                                                   {:status code
+                                                    :body   {:error error}})))}}]
        ["/"
         {:get {:summary "hello world"
                :handler (fn [_req]
