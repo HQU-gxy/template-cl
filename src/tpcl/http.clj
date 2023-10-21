@@ -44,15 +44,19 @@
                     file-temp-path)]
     file-path))
 
+(def to-swagger
+  {:get {:handler
+         (fn [_req] {:status  302
+                     :headers {"location" "/swagger/index.html"}})}})
+
 (def app
   "router handler"
   (ring/ring-handler
     (ring/router
       [["" {:no-doc true}
         ["/swagger.json" {:get (swagger/create-swagger-handler)}]
-        ["/swagger" {:get {:handler
-                           (fn [_req] {:status  302
-                                       :headers {"location" "/swagger/index.html"}})}}]
+        ["/swagger" to-swagger]
+        ["/swagger/" to-swagger]
         ["/swagger/*" {:get (swagger-ui/create-swagger-ui-handler)}]]
        ["/template"
         ["/" {:get {:summary "get templates"
@@ -63,7 +67,7 @@
                                      files (map #(str/replace % (str template-path "/") "") files)]
                                  {:status 200
                                   :body   {:files files}}))}}]
-        ["/:name" {:get    {:summary    "get template"
+        ["/:name" {:get    {:summary    "get a template"
                             :parameters {:path {:name string?}}
                             :handler    (fn [req]
                                           (let [{{{:keys [name]} :path} :parameters} req
