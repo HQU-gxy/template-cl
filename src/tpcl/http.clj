@@ -27,6 +27,19 @@
                        rrc/coerce-request-middleware
                        rrc/coerce-response-middleware]}})
 
+(defn check-file-path
+  "`name` is a string of stem (filename without dot) of a file or a full filename.
+  `extension` is a string of extension (without dot)"
+  [name extension]
+  (let [file-temp-path (fs/path template-path name)
+        ext (fs/extension file-temp-path)
+        file-path (if (empty? ext)
+                    (let [parent (fs/parent file-temp-path)
+                          filename (fs/file-name file-temp-path)]
+                      (fs/path parent (str filename extension)))
+                    file-temp-path)]
+    file-path))
+
 (def app
   "router handler"
   (ring/ring-handler
@@ -37,33 +50,52 @@
                            (fn [_req] {:status  302
                                        :headers {"location" "/swagger/index.html"}})}}]
         ["/swagger/*" {:get (swagger-ui/create-swagger-ui-handler)}]]
-       ["/template/:name" {:get {:summary    "get template"
-                                 :parameters {:path {:name string?}}
-                                 :handler    (fn [req]
+       ["/template/:name" {:get  {:summary    "get template"
+                                  :parameters {:path {:name string?}}
+                                  :handler    (fn [req]
+                                                (let [{{{:keys [name]} :path} :parameters} req
+                                                      file-path (check-file-path name "json")
+                                                      ;; the extension (without dot), will be used for splitting
+                                                      file-content (if (= (fs/extension file-path) "json")
+                                                                     (if (fs/exists? file-path)
+                                                                       (try
+                                                                         {:code    200
+                                                                          :content (json/decode (slurp (str file-path)) true)}
+                                                                         (catch Exception e
+                                                                           {:code  500
+                                                                            :error (.getMessage e)}))
+                                                                       {:code  404
+                                                                        :error (str "template not found for file " file-path)})
+                                                                     {:code  400
+                                                                      :error (str name " is not a valid template extension")})
+                                                      code (:code file-content)
+                                                      content (:content file-content)
+                                                      error (:error file-content)]
+                                                  (if (nil? error)
+                                                    {:status code
+                                                     :body   content}
+                                                    {:status code
+                                                     :body   {:error error}})))}
+                           :post {:summary   "create template"
+                                  :parameter {:path {:name string?} :body {}}
+                                  :handler   (fn [req]
                                                (let [{{{:keys [name]} :path} :parameters} req
-                                                     file-temp-path (fs/path template-path name)
-                                                     ext (fs/extension file-temp-path)
-                                                     file-path (if (empty? ext)
-                                                                 (let [parent (fs/parent file-temp-path)
-                                                                       filename (fs/file-name file-temp-path)]
-                                                                   (fs/path parent (str filename ".json")))
-                                                                 file-temp-path)
-                                                     ;; the extension (without dot), will be used for splitting
-                                                     file-content (if (= (fs/extension file-path) "json")
-                                                                    (if (fs/exists? file-path)
-                                                                      (try
-                                                                        {:code    200
-                                                                         :content (json/decode (slurp (str file-path)) true)}
-                                                                        (catch Exception e
-                                                                          {:code  500
-                                                                           :error (.getMessage e)}))
-                                                                      {:code  404
-                                                                       :error (str "template not found for file " file-path)})
-                                                                    {:code  400
-                                                                     :error "not a valid template extension"})
-                                                     code (:code file-content)
-                                                     content (:content file-content)
-                                                     error (:error file-content)]
+                                                     {{content :body} :parameters} req
+                                                     file-path (check-file-path name "json")
+                                                     result (if (= (fs/extension file-path) "json")
+                                                              (if-not (fs/exists? file-path)
+                                                                (try (do
+                                                                       (spit file-path (json/encode (json/decode content)))
+                                                                       {:code 200})
+                                                                     (catch Exception e
+                                                                       {:code  500
+                                                                        :error (.getMessage e)}))
+                                                                {:code  400
+                                                                 :error (str "file " (str file-path) "already existed")})
+                                                              {:code  400
+                                                               :error (str name " is not a valid template extension")})
+                                                     code (:code result)
+                                                     error (:error result)]
                                                  (if (nil? error)
                                                    {:status code
                                                     :body   content}
