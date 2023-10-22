@@ -2,7 +2,7 @@
 <module type="JAVA_MODULE" version="4">
   <component name="BuildSystem">
     <option name="buildSystemId" value="CLOJURE_DEPS" />
-    <option name="displayName" value="template_cl" />
+    <option name="displayName" value="template-cl" />
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
@@ -150,7 +150,7 @@
     <orderEntry type="library" name="Deps: metosin/reitit-swagger-ui:0.7.0-alpha7" level="project" />
     <orderEntry type="library" name="Deps: metosin/reitit:0.7.0-alpha7" level="project" />
     <orderEntry type="library" name="Deps: io.netty/netty-transport-classes-kqueue:4.1.94.Final" level="project" />
-    <orderEntry type="library" name="Deps: babashka/fs:0.0.3" level="project" />
+    <orderEntry type="library" name="Deps: babashka/fs:0.4.19" level="project" />
     <orderEntry type="library" name="Deps: com.cnuernber/charred:1.033" level="project" />
     <orderEntry type="library" name="Deps: tech.droit/clj-diff:1.0.1" level="project" />
     <orderEntry type="library" name="Deps: camel-snake-kebab:0.4.2" level="project" />
