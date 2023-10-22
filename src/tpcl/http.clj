@@ -140,8 +140,7 @@
                                             (if (nil? error)
                                               {:status code}
                                               {:status code
-                                               :body   {:error error}})))}}]
-        ]
+                                               :body   {:error error}})))}}]]
        ["/"
         {:get {:summary "hello world"
                :handler (fn [_req]

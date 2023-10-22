@@ -3,7 +3,10 @@
   "variables": [
     {
       "name": "date",
-      "type": "datetime"
+      "type": "datetime",
+      "verify": "true",
+      "path": "",
+      "source": "patient"
     }
   ],
   "sources": [
