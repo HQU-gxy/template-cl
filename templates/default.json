@@ -3,46 +3,17 @@
   "variables": [
     {
       "name": "date",
-      "type": "datetime"
-    },
+      "type": "datetime",
+      "verify": "true",
+      "path": "",
+      "source": "patient"
+    }
+  ],
+  "sources": [
     {
-      "name": "hospital_name",
-      "type": "string"
-    },
-    {
-      "name": "apartment_name",
-      "type": "string"
-    },
-    {
-      "name": "project_name",
-      "type": "string"
-    },
-    {
-      "name": "num_patient",
-      "type": "int"
-    },
-    {
-      "name": "num_operation",
-      "type": "int",
-      "data_source": "operation",
-      "query": "SELECT COUNT(*) FROM operation"
-    },
-    {
-      "name": "num_operation_4",
-      "type": "int"
-    },
-    {
-      "name": "num_operation_micro",
-      "type": "int"
-    },
-    {
-      "name": "CMI",
-      "type": "float"
-    },
-    {
-      "name": "calc",
-      "type": "num",
-      "calculated": "CMI + num_operation_micro"
+      "patient": {
+        "path": "data.json"
+      }
     }
   ],
   "content": [
@@ -62,16 +33,5 @@
     {
       "tag": "table"
     }
-  ],
-  "style": {
-    "h1": {
-      "font-size": "20px",
-      "font-weight": "bold"
-    },
-    "table": {
-      "header": {
-        "background-color": "blue"
-      }
-    }
-  }
+  ]
 }

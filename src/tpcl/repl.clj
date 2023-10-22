@@ -7,7 +7,7 @@
   (:import (java.time YearMonth)
            (java.time LocalDate)))
 
-(def data-path "data.json")
+(def data-path "data/data.json")
 
 ;; convert key from string to keyword is necessary
 (json/decode (slurp data-path) true)
@@ -16,12 +16,16 @@
 
 (jp/at-path "$.visitList" (json/decode (slurp data-path) true))
 
+(defn parse-ym-as-local-date
+  [date]
+  (let [ym (YearMonth/parse date)]
+    (LocalDate/of (.getYear ym) (.getMonth ym) 1)))
+
 (utils/unique (jp/at-path "$.visitList[*].TDIAGNOSE[*].FJBNAME" (json/decode (slurp data-path) true)))
+
+(jp/at-path "$.operateList[*].total" (json/decode (slurp data-path) true))
 
 ;; https://techascent.github.io/tech.ml.dataset/supported-datatypes.html
 (def operation-data (ds/->dataset (jp/at-path "$.operateList" (json/decode (slurp data-path) true))
-                                  {:parser-fn {:date [:local-date
-                                                      (fn [date]
-                                                        (let [ym (YearMonth/parse date)]
-                                                          (LocalDate/of (.getYear ym) (.getMonth ym) 1)))]}}))
+                                  {:parser-fn {:date [:local-date parse-ym-as-local-date]}}))
 (log/info operation-data)
