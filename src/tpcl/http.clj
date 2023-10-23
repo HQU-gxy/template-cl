@@ -11,9 +11,15 @@
             [cheshire.core :as json]
             [muuntaja.core :as m]
             [clojure.string :as str]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log])
+  (:use [tpcl.formatter :only [format]]))
 
 (def template-path "templates")
+
+(defn normalize-path
+  [path]
+  (let [p (if (string? path) path (str path))]
+    (str/replace p "\\" "/")))
 
 (def cors-config {:cors-config {:allowed-request-methods [:post :get :put :delete]
                                 :allowed-request-headers ["Authorization" "Content-Type"]
@@ -82,9 +88,9 @@
                                                                      {:code  500
                                                                       :error (.getMessage e)}))
                                                                  {:code  404
-                                                                  :error (str "template not found for file " file-path)})
+                                                                  :error (format "template not found for file '{}'" (normalize-path file-path))})
                                                                {:code  400
-                                                                :error (str name " is not a valid template extension")})
+                                                                :error (format "'{}' doesn't have a valid template extension" name)})
                                                 code (:code file-content)
                                                 content (:content file-content)
                                                 error (:error file-content)]
@@ -109,9 +115,9 @@
                                                                   {:code  500
                                                                    :error (.getMessage e)}))
                                                            {:code  400
-                                                            :error (str "file " (str file-path) " already exists")})
+                                                            :error (format "file '{}' already exists" (normalize-path file-path))})
                                                          {:code  400
-                                                          :error (str name " is not a valid template extension")})
+                                                          :error (format "'{}' doesn't have a valid template extension" name)})
                                                 code (:code result)
                                                 error (:error result)]
                                             (if (nil? error)
@@ -132,9 +138,9 @@
                                                                   {:code  500
                                                                    :error (.getMessage e)}))
                                                            {:code  400
-                                                            :error (str "file " (str file-path) " does not existed")})
+                                                            :error (format "file '{}' does not existed" (normalize-path file-path))})
                                                          {:code  400
-                                                          :error (str name " is not a valid template extension")})
+                                                          :error (format "'{}' doesn't have a valid template extension" name)})
                                                 code (:code result)
                                                 error (:error result)]
                                             (if (nil? error)

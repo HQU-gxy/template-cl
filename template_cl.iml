@@ -2,7 +2,7 @@
 <module type="JAVA_MODULE" version="4">
   <component name="BuildSystem">
     <option name="buildSystemId" value="CLOJURE_DEPS" />
-    <option name="displayName" value="template-cl" />
+    <option name="displayName" value="template_cl" />
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
@@ -141,7 +141,7 @@
     <orderEntry type="library" name="Deps: fi.metosin/reitit-openapi:0.7.0-alpha7" level="project" />
     <orderEntry type="library" name="Deps: io.netty/netty-resolver:4.1.94.Final" level="project" />
     <orderEntry type="library" name="Deps: clj-stacktrace:0.2.8" level="project" />
-    <orderEntry type="library" name="Deps: org.slf4j/slf4j-api:2.0.7" level="project" />
+    <orderEntry type="library" name="Deps: org.slf4j/slf4j-api:2.0.9" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/test.check:1.1.1" level="project" />
     <orderEntry type="library" name="Deps: metosin/reitit-frontend:0.7.0-alpha7" level="project" />
     <orderEntry type="library" name="Deps: io.netty/netty-resolver-dns:4.1.94.Final" level="project" />
