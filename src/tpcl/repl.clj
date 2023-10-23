@@ -21,11 +21,6 @@
   (let [ym (YearMonth/parse date)]
     (LocalDate/of (.getYear ym) (.getMonth ym) 1)))
 
-
-(fn [coll] (map #(java.time.LocalDate/parse %) coll))
-
-(fn [x] (if (seq? x) (every? #(instance? java.time.LocalDate %) x) false))
-
 (utils/unique (jp/at-path "$.visitList[*].TDIAGNOSE[*].FJBNAME" (json/decode (slurp data-path) true)))
 
 (jp/at-path "$.operateList[*].total" (json/decode (slurp data-path) true))
