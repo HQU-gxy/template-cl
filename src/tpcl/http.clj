@@ -62,9 +62,9 @@
         ["/" {:get {:summary "get templates"
                     :handler (fn [_req]
                                (let [files (fs/list-dir template-path)
+                                     files (filter #(= (fs/extension %) "json") files)
                                      ;; remove extension
-                                     files (map #(str/replace % ".json" "") files)
-                                     files (map #(str/replace % (str template-path "/") "") files)]
+                                     files (map #(first (fs/split-ext (fs/file-name %))) files)]
                                  {:status 200
                                   :body   {:files files}}))}}]
         ["/:name" {:get    {:summary    "get a template"
